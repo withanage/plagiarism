@@ -102,6 +102,7 @@ class PlagiarismPlugin extends GenericPlugin {
 	 * @param $args array
 	 */
 	public function callback($hookName, $args) {
+		var_dump(debug_backtrace());
 		$request = Application::get()->getRequest();
 		$context = $request->getContext();
 		$contextPath = $context->getPath();
@@ -122,18 +123,23 @@ class PlagiarismPlugin extends GenericPlugin {
 		$ithenticate = null;
 		try {
 			$ithenticate = new \bsobbe\ithenticate\Ithenticate($username, $password);
+			var_dump(debug_backtrace());
 		} catch (Exception $e) {
 			$this->sendErrorMessage($submission->getId(), $e->getMessage());
+			var_dump(debug_backtrace());
 			return false;
 		}
 		// Make sure there's a group list for this context, creating if necessary.
 		$groupList = $ithenticate->fetchGroupList();
 		$contextName = $context->getLocalizedName($context->getPrimaryLocale());
+		var_dump(debug_backtrace());
 		if (!($groupId = array_search($contextName, $groupList))) {
 			// No folder group found for the context; create one.
 			$groupId = $ithenticate->createGroup($contextName);
+			var_dump(debug_backtrace());
 			if (!$groupId) {
 				$this->sendErrorMessage($submission->getId(), 'Could not create folder group for context ' . $contextName . ' on iThenticate.');
+				var_dump(debug_backtrace());
 				return false;
 			}
 		}
@@ -146,7 +152,9 @@ class PlagiarismPlugin extends GenericPlugin {
 			true,
 			true
 		))) {
+			var_dump(debug_backtrace());
 			$this->sendErrorMessage($submission->getId(), 'Could not create folder for submission ID ' . $submission->getId() . ' on iThenticate.');
+			var_dump(debug_backtrace());
 			return false;
 		}
 
@@ -166,6 +174,7 @@ class PlagiarismPlugin extends GenericPlugin {
 				Services::get('file')->fs->read($file->path),
 				$folderId
 			)) {
+				var_dump(debug_backtrace());
 				$this->sendErrorMessage($submission->getId(), 'Could not submit "' . $submissionFile->getData('path') . '" to iThenticate.');
 			}
 		}
