@@ -129,6 +129,7 @@ class PlagiarismPlugin extends GenericPlugin {
 		// Make sure there's a group list for this context, creating if necessary.
 		$groupList = $ithenticate->fetchGroupList();
 		$contextName = $context->getLocalizedName($context->getPrimaryLocale());
+		var_dump($contextName,$groupList);
 		if (!($groupId = array_search($contextName, $groupList))) {
 			// No folder group found for the context; create one.
 			$groupId = $ithenticate->createGroup($contextName);
