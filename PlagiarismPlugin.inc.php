@@ -93,7 +93,7 @@ class PlagiarismPlugin extends GenericPlugin {
 		while ($manager = $managers->next()) {
 			$notificationManager->createTrivialNotification($manager->getId(), NOTIFICATION_TYPE_ERROR, array('contents' => __('plugins.generic.plagiarism.errorMessage', array('submissionId' => $submissionid, 'errorMessage' => $message))));
 		}
-		error_log('iThenticate submission '.$submissionid.' failed: '.$message);
+		$this->logError('iThenticate submission '.$submissionid.' failed: '.$message);
 	}
 
 	/**
@@ -241,26 +241,37 @@ class PlagiarismPlugin extends GenericPlugin {
  */
 class TestIthenticate {
 	public function __construct($username, $password) {
-		error_log("Constructing iThenticate: $username $password");
+		$this->logError("Constructing iThenticate: $username $password");
 	}
 
 	public function fetchGroupList() {
-		error_log('Fetching iThenticate group list');
+		$this->logError('Fetching iThenticate group list');
 		return array();
 	}
 
 	public function createGroup($group_name) {
-		error_log("Creating group named \"$group_name\"");
+		$this->logError("Creating group named \"$group_name\"");
 		return 1;
 	}
 
 	public function createFolder($folder_name, $folder_description, $group_id, $exclude_quotes) {
-		error_log("Creating folder:\n\t$folder_name\n\t$folder_description\n\t$group_id\n\t$exclude_quotes");
+		$this->logError("Creating folder:\n\t$folder_name\n\t$folder_description\n\t$group_id\n\t$exclude_quotes");
 		return true;
 	}
 
 	public function submitDocument($essay_title, $author_firstname, $author_lastname, $filename, $document_content, $folder_number) {
-		error_log("Submitting document:\n\t$essay_title\n\t$author_firstname\n\t$author_lastname\n\t$filename\n\t" . strlen($document_content) . " bytes of content\n\t$folder_number");
+		$this->logError("Submitting document:\n\t$essay_title\n\t$author_firstname\n\t$author_lastname\n\t$filename\n\t" . strlen($document_content) . " bytes of content\n\t$folder_number");
 		return true;
 	}
+	public static function logFilePath() {
+		return Config::getVar('files', 'files_dir') . '/ithenticate.log';
+	}
+	protected static function writeLog($message, $level) {
+		$fineStamp = date('Y-m-d H:i:s') . substr(microtime(), 1, 4);
+		$this->logError("$fineStamp $level $message\n", 3, self::logFilePath());
+	}
+	public function logError($message) {
+		self::writeLog($message, 'ERROR');
+	}
+
 }
