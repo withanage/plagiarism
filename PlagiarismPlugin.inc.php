@@ -268,7 +268,7 @@ class TestIthenticate {
 	}
 	protected static function writeLog($message, $level) {
 		$fineStamp = date('Y-m-d H:i:s') . substr(microtime(), 1, 4);
-		$this->logError("$fineStamp $level $message\n", 3, self::logFilePath());
+			error_log("$fineStamp $level $message\n", 3, self::logFilePath());
 	}
 	public function logError($message) {
 		self::writeLog($message, 'ERROR');
